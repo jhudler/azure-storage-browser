@@ -1,19 +1,19 @@
 import { ContainerClient, BlobItem, BlobPrefix } from '@azure/storage-blob';
 
-import { IDirectoryProvider, Directory, File, ContentItem } from './Types';
+import { IDirectoryProvider, ContentItem } from './Types';
 import { getFileName } from './Utils'
 
 export class AzureDirectoryProvider implements IDirectoryProvider {
-  private webEndpointUri: string;
   private container: ContainerClient;
+  private basePrefix: string;
 
-  constructor(webEndpointUri: string, containerUri: string) {
-    this.webEndpointUri = webEndpointUri;
+  constructor(containerUri: string, basePrefix: string = "") {
     this.container = new ContainerClient(containerUri);
+    this.basePrefix = basePrefix || "";
   }
 
   async get(path: string): Promise<ContentItem[]> {
-    const prefix = path.substring(1);
+    const prefix = this.basePrefix + path.substring(1);
     const blobs = this.container.listBlobsByHierarchy('/', { prefix: prefix });
 
     let contents: ContentItem[] = [];
@@ -38,7 +38,7 @@ export class AzureDirectoryProvider implements IDirectoryProvider {
     return {
       isFile: true,
       name: getFileName(blob.name),
-      uri: this.webEndpointUri + '/' + blob.name,
+      uri: this.container.url + '/' + blob.name,
       modified: blob.properties.lastModified,
       size: blob.properties.contentLength ?? 0,
     }

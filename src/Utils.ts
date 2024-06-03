@@ -50,7 +50,7 @@ export const getDefaultWebUri = (): string => {
   return window.location.protocol + '//' + window.location.hostname;
 }
 
-export const getDefaultContainerUri = (): string => {
+export const getDefaultContainerUri = (containerName: string): string => {
   const WEB = '.web.';
   const BLOB = '.blob.';
 
@@ -69,5 +69,5 @@ export const getDefaultContainerUri = (): string => {
   const hostSuffix = host.substring(suffixIdx + WEB.length);
   const accountName = host.substring(0, accountIdx);
 
-  return window.location.protocol + '//' + accountName + BLOB + hostSuffix + '/$web';
+  return window.location.protocol + '//' + accountName + BLOB + hostSuffix + '/' + containerName;
 }

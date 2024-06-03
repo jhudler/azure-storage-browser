@@ -15,7 +15,7 @@ export const DirectoryBrowser = ({ provider, initialPath }: DirectoryBrowserProp
   const [contents, setContents] = useState<ContentItem[] | null>(null);
 
   useEffect(() => {
-    window.document.title = 'Index of ' + path;
+    window.document.title = 'Conteúdo em ' + path;
     window.history.pushState(null, '', path);
   }, [path]);
 

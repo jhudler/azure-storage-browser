@@ -7,25 +7,24 @@ import { initializeFileTypeIcons } from '@fluentui/react-file-type-icons';
 import { DirectoryBrowser } from './DirectoryBrowser';
 import { AzureDirectoryProvider } from './AzureDirectoryProvider';
 
-import { getDefaultWebUri, getDefaultContainerUri } from './Utils';
+import { getDefaultWebUri, getDefaultContainerUri as getContainerUri } from './Utils';
 
 initializeIcons();
 initializeFileTypeIcons();
 
 const root = document.getElementById('root');
 
-let webUri = root?.dataset['webUri'];
+let urlParams = new URLSearchParams(window.location.search);
 let containerUri = root?.dataset['containerUri'];
 
-if (webUri === undefined) {
-  webUri = getDefaultWebUri();
-}
-
 if (containerUri === undefined) {
-  containerUri = getDefaultContainerUri();
+  let containerName = urlParams.get("container");
+  if (containerName == null)
+     throw new Error("Nome de container de dados não especificado!");
+  containerUri = getContainerUri(containerName);
 }
 
-const provider = new AzureDirectoryProvider(webUri, containerUri);
+const provider = new AzureDirectoryProvider(containerUri);
 const path = document.location.pathname;
 
 ReactDOM.render(<DirectoryBrowser provider={provider} initialPath={path} />, root);
